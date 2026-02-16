@@ -20,8 +20,8 @@ builds:
       - amd64
     env:
       - CGO_ENABLED=1
-      - CC=o64-clang
-      - CXX=o64-clang++
+      - CC=x86_64-apple-darwin22-clang
+      - CXX=x86_64-apple-darwin22-clang++
     flags:
       - -trimpath
     ldflags:
@@ -37,8 +37,8 @@ builds:
       - arm64
     env:
       - CGO_ENABLED=1
-      - CC=oa64-clang
-      - CXX=oa64-clang++
+      - CC=arm64-apple-darwin22-clang
+      - CXX=arm64-apple-darwin22-clang++
     flags:
       - -trimpath
     ldflags:
@@ -79,11 +79,11 @@ builds:
     ldflags:
       - -s
       - -w
+      - -extldflags=-static
       - -X=main.VERSION={{.Tag}}_{{.ShortCommit}}
 
 universal_binaries:
-  - id: darwin-universal
-    ids:
+  - ids:
       - darwin-amd64
       - darwin-arm64
     replace: true
