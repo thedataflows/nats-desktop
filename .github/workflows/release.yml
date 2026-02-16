@@ -15,6 +15,21 @@ jobs:
     container:
       image: goreleaser/goreleaser-cross:v1.25
     steps:
+      - name: Install system dependencies
+        run: |
+          apt-get update
+          apt-get install -y \
+            libwayland-dev \
+            libx11-dev \
+            libxkbcommon-dev \
+            libxkbcommon-x11-dev \
+            libgles2-mesa-dev \
+            libegl1-mesa-dev \
+            libffi-dev \
+            libxcursor-dev \
+            libgtk-3-dev \
+            pkg-config
+
       - name: Checkout
         uses: actions/checkout@v4
         with:
