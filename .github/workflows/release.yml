@@ -17,7 +17,6 @@ jobs:
     steps:
       - name: Install system dependencies
         run: |
-          apt-get update
           # Add LunarG repository for Vulkan SDK
           wget -qO /usr/share/keyrings/lunarg-vulkan-keyring.asc https://packages.lunarg.com/lunarg-signing-key-pub.asc
           . /etc/os-release && echo "deb [signed-by=/usr/share/keyrings/lunarg-vulkan-keyring.asc] https://packages.lunarg.com/vulkan ${VERSION_CODENAME} main" > /etc/apt/sources.list.d/lunarg-vulkan.list
@@ -36,7 +35,9 @@ jobs:
             pkg-config \
             wget \
             apt-transport-https \
-            ca-certificates
+            ca-certificates \
+            vulkan-headers \
+            libvulkan-dev
 
       - name: Checkout
         uses: actions/checkout@v4
