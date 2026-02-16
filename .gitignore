@@ -1,0 +1,5 @@
+/nats-desktop*
+/main
+tmp/
+/jetstream-backups/
+/jetstream/

@@ -1,0 +1,8 @@
+[tools]
+
+"github:nats-io/nats-server" = "latest"
+
+## https://github.com/nats-io/natscli/releases
+"github:nats-io/natscli" = { version = "latest", exe='nats' }
+
+"go:golang.org/x/tools/cmd/deadcode" = "latest"

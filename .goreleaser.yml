@@ -1,0 +1,34 @@
+version: 2
+project_name: nats-desktop
+archives:
+  - strip_binary_directory: true
+    format_overrides:
+      - goos: windows
+        formats: zip
+    files:
+      - README.md
+      - LICENSE
+    name_template: "{{ .ProjectName }}_{{ .Tag }}_{{ .Os }}_{{ .Arch }}"
+builds:
+  - id: default
+    env:
+      - CGO_ENABLED=0
+    goos:
+      - linux
+      - darwin
+      - windows
+    goarch:
+      - amd64
+      # - arm64
+    flags:
+      - -mod=readonly
+      - -trimpath
+    ldflags:
+      - -s
+      - -w
+      - -X=main.VERSION={{.Tag}}_{{.ShortCommit}}
+checksum:
+  name_template: "sha256sums.txt"
+  algorithm: sha256
+snapshot:
+  version_template: "{{ .Version }}-next"
