@@ -35,7 +35,7 @@ Screenshots are in the [screenshots/](screenshots/) directory.
 
 ### 1. Download the latest release
 
-<https://github.com/nats-io/nats-desktop/releases>
+<https://github.com/thedataflows/nats-desktop/releases>
 
 ### 2. Start a local NATS server
 
