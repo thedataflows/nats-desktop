@@ -1,5 +1,6 @@
 version: 2
 project_name: nats-desktop
+
 archives:
   - strip_binary_directory: true
     format_overrides:
@@ -9,27 +10,88 @@ archives:
       - README.md
       - LICENSE
     name_template: "{{ .ProjectName }}_{{ .Tag }}_{{ .Os }}_{{ .Arch }}"
+
 builds:
-  - id: default
+  - id: darwin-amd64
     main: ./cmd/nats-desktop
-    env:
-      - CGO_ENABLED=0
     goos:
-      - linux
       - darwin
-      - windows
     goarch:
       - amd64
-      # - arm64
+    env:
+      - CGO_ENABLED=1
+      - CC=o64-clang
+      - CXX=o64-clang++
     flags:
-      - -mod=readonly
       - -trimpath
     ldflags:
       - -s
       - -w
       - -X=main.VERSION={{.Tag}}_{{.ShortCommit}}
+
+  - id: darwin-arm64
+    main: ./cmd/nats-desktop
+    goos:
+      - darwin
+    goarch:
+      - arm64
+    env:
+      - CGO_ENABLED=1
+      - CC=oa64-clang
+      - CXX=oa64-clang++
+    flags:
+      - -trimpath
+    ldflags:
+      - -s
+      - -w
+      - -X=main.VERSION={{.Tag}}_{{.ShortCommit}}
+
+  - id: linux-amd64
+    main: ./cmd/nats-desktop
+    goos:
+      - linux
+    goarch:
+      - amd64
+    env:
+      - CGO_ENABLED=1
+      - CC=x86_64-linux-gnu-gcc
+      - CXX=x86_64-linux-gnu-g++
+    flags:
+      - -trimpath
+    ldflags:
+      - -s
+      - -w
+      - -X=main.VERSION={{.Tag}}_{{.ShortCommit}}
+
+  - id: windows-amd64
+    main: ./cmd/nats-desktop
+    goos:
+      - windows
+    goarch:
+      - amd64
+    env:
+      - CGO_ENABLED=1
+      - CC=x86_64-w64-mingw32-gcc
+      - CXX=x86_64-w64-mingw32-g++
+    flags:
+      - -trimpath
+      - -buildmode=exe
+    ldflags:
+      - -s
+      - -w
+      - -X=main.VERSION={{.Tag}}_{{.ShortCommit}}
+
+universal_binaries:
+  - id: darwin-universal
+    ids:
+      - darwin-amd64
+      - darwin-arm64
+    replace: true
+    name_template: "{{.ProjectName}}"
+
 checksum:
   name_template: "sha256sums.txt"
   algorithm: sha256
+
 snapshot:
   version_template: "{{ .Version }}-next"
