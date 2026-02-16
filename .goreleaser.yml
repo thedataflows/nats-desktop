@@ -11,6 +11,7 @@ archives:
     name_template: "{{ .ProjectName }}_{{ .Tag }}_{{ .Os }}_{{ .Arch }}"
 builds:
   - id: default
+    main: ./cmd/nats-desktop
     env:
       - CGO_ENABLED=0
     goos:
