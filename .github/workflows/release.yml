@@ -18,6 +18,10 @@ jobs:
       - name: Install system dependencies
         run: |
           apt-get update
+          # Add LunarG repository for Vulkan SDK
+          wget -qO - https://packages.lunarg.com/lunarg-signing-key-pub.asc | apt-key add -
+          . /etc/os-release && echo "deb https://packages.lunarg.com/vulkan ${VERSION_CODENAME} main" > /etc/apt/sources.list.d/lunarg-vulkan.list
+          apt-get update
           apt-get install -y \
             libwayland-dev \
             libx11-dev \
@@ -28,6 +32,8 @@ jobs:
             libffi-dev \
             libxcursor-dev \
             libgtk-3-dev \
+            vulkan-headers \
+            libvulkan-dev \
             pkg-config
 
       - name: Checkout
