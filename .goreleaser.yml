@@ -20,8 +20,8 @@ builds:
       - amd64
     env:
       - CGO_ENABLED=1
-      - CC=x86_64-apple-darwin22-clang
-      - CXX=x86_64-apple-darwin22-clang++
+      - CC=o64-clang
+      - CXX=o64-clang++
     flags:
       - -trimpath
     ldflags:
@@ -37,8 +37,8 @@ builds:
       - arm64
     env:
       - CGO_ENABLED=1
-      - CC=arm64-apple-darwin22-clang
-      - CXX=arm64-apple-darwin22-clang++
+      - CC=oa64-clang
+      - CXX=oa64-clang++
     flags:
       - -trimpath
     ldflags:

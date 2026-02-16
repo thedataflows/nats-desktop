@@ -5,24 +5,25 @@ on:
     tags:
       - "v*.*.*"
 
-env:
-  REGISTRY: ghcr.io
-  IMAGE_NAME: ${{ github.repository }}
+permissions:
+  contents: write
+  packages: write
 
 jobs:
   goreleaser:
     runs-on: ubuntu-latest
-    permissions:
-      contents: write
+    container:
+      image: goreleaser/goreleaser-cross:v1.25
     steps:
       - name: Checkout
-        uses: actions/checkout@v5
+        uses: actions/checkout@v4
         with:
           fetch-depth: 0
-      - name: Run GoReleaser with CGO
-        uses: goreleaser/goreleaser-action@v6
-        with:
-          version: "~> v2"
-          args: release --clean
+
+      - name: Git Safe Directory
+        run: git config --global --add safe.directory $GITHUB_WORKSPACE
+
+      - name: Run GoReleaser
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: goreleaser release --clean
