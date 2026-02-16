@@ -19,12 +19,13 @@ jobs:
         run: |
           apt-get update
           # Add LunarG repository for Vulkan SDK
-          wget -qO - https://packages.lunarg.com/lunarg-signing-key-pub.asc | apt-key add -
-          . /etc/os-release && echo "deb https://packages.lunarg.com/vulkan ${VERSION_CODENAME} main" > /etc/apt/sources.list.d/lunarg-vulkan.list
+          wget -qO /usr/share/keyrings/lunarg-vulkan-keyring.asc https://packages.lunarg.com/lunarg-signing-key-pub.asc
+          . /etc/os-release && echo "deb [signed-by=/usr/share/keyrings/lunarg-vulkan-keyring.asc] https://packages.lunarg.com/vulkan ${VERSION_CODENAME} main" > /etc/apt/sources.list.d/lunarg-vulkan.list
           apt-get update
           apt-get install -y \
             libwayland-dev \
             libx11-dev \
+            libx11-xcb-dev \
             libxkbcommon-dev \
             libxkbcommon-x11-dev \
             libgles2-mesa-dev \
@@ -32,10 +33,10 @@ jobs:
             libffi-dev \
             libxcursor-dev \
             libgtk-3-dev \
-            vulkan-headers \
-            libvulkan-dev \
-            x11-xcb \
-            pkg-config
+            pkg-config \
+            wget \
+            apt-transport-https \
+            ca-certificates
 
       - name: Checkout
         uses: actions/checkout@v4
