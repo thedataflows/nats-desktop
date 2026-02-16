@@ -27,6 +27,11 @@ func main() {
 
 	app.ID = "nats-desktop"
 	go func() {
+		defer func() {
+			if r := recover(); r != nil {
+				log.Printf("recovered from panic: %v", r)
+			}
+		}()
 		w := new(app.Window)
 		w.Option(app.Title("NATS Desktop"), app.Size(1280, 800))
 		if err := loop(w); err != nil {
