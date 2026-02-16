@@ -1,0 +1,6 @@
+[settings]
+go_set_goroot = true
+
+[tools]
+## https://go.dev/doc/devel/release
+go = '1.24'
