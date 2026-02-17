@@ -341,6 +341,11 @@ func NewConsumersView(th *theme.Theme) *ConsumersView {
 
 func (v *ConsumersView) SetApp(app App) {
 	v.App = app
+	v.Table.OnCopyFeedback = func(text string) {
+		if v.App != nil {
+			v.App.ShowToast("Copied: "+text, components.ToastTypeSuccess)
+		}
+	}
 }
 
 func (v *ConsumersView) SetNavigation(next, prev any) {
@@ -1741,5 +1746,7 @@ func (v *ConsumersView) GetShortcutsHelp() []shortcuts.Shortcut {
 		shortcuts.Refresh(func() {}),
 		shortcuts.Delete(func() bool { return v.SelectedIdx >= 0 }, func() {}),
 		shortcuts.Edit(func() bool { return v.SelectedIdx >= 0 }, func() {}),
+		shortcuts.CopyName(func() bool { return v.SelectedIdx >= 0 }, func() {}),
+		shortcuts.CopyRow(func() bool { return v.SelectedIdx >= 0 }, func() {}),
 	}
 }

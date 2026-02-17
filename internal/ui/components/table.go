@@ -2,6 +2,7 @@ package components
 
 import (
 	"image"
+	"strings"
 
 	"gioui.org/font"
 	"gioui.org/gesture"
@@ -64,6 +65,9 @@ type Table struct {
 	dragIndex      int
 	dragStartWidth unit.Dp
 	dragStartX     float32
+
+	// OnCopyFeedback is called when a copy operation completes, with the copied text
+	OnCopyFeedback func(text string)
 }
 
 func (t *Table) Clicked() bool {
@@ -141,6 +145,7 @@ func (t *Table) Layout(gtx layout.Context, th *theme.Theme) layout.Dimensions {
 			key.Filter{Focus: t, Name: key.NameEnter},
 			key.Filter{Focus: t, Name: key.NameReturn},
 			key.Filter{Focus: t, Name: key.NameSpace},
+			key.Filter{Focus: t, Name: key.Name("C"), Optional: key.ModCtrl | key.ModShift},
 		)
 		if !ok {
 			break
@@ -179,6 +184,22 @@ func (t *Table) Layout(gtx layout.Context, th *theme.Theme) layout.Dimensions {
 			case key.NameEnter, key.NameSpace, key.NameReturn:
 				t.clicked = true
 				t.doubleClicked = true
+			case key.Name("C"):
+				if t.SelectedRow >= 0 && t.SelectedRow < len(t.Rows) {
+					if ke.Modifiers.Contain(key.ModCtrl | key.ModShift) {
+						tsv := t.GetSelectedRowTSV()
+						CopyToClipboard(gtx, tsv)
+						if t.OnCopyFeedback != nil {
+							t.OnCopyFeedback(TruncateText(tsv, 50))
+						}
+					} else if ke.Modifiers.Contain(key.ModCtrl) {
+						name := t.GetSelectedName()
+						CopyToClipboard(gtx, name)
+						if t.OnCopyFeedback != nil {
+							t.OnCopyFeedback(TruncateText(name, 50))
+						}
+					}
+				}
 			}
 
 			if t.SelectedRow != originalRow {
@@ -701,4 +722,38 @@ func (t *Table) totalWidth(gtx layout.Context) int {
 		w += gtx.Dp(cw)
 	}
 	return w
+}
+
+func (t *Table) GetSelectedName() string {
+	if t.SelectedRow < 0 || t.SelectedRow >= len(t.Rows) {
+		return ""
+	}
+
+	row := t.Rows[t.SelectedRow]
+	if len(row.Values) == 0 {
+		return ""
+	}
+
+	for i, col := range t.Columns {
+		if strings.EqualFold(col, "Name") && i < len(row.Values) {
+			return row.Values[i]
+		}
+	}
+
+	for i, col := range t.Columns {
+		if strings.EqualFold(col, "Title") && i < len(row.Values) {
+			return row.Values[i]
+		}
+	}
+
+	return row.Values[0]
+}
+
+func (t *Table) GetSelectedRowTSV() string {
+	if t.SelectedRow < 0 || t.SelectedRow >= len(t.Rows) {
+		return ""
+	}
+
+	row := t.Rows[t.SelectedRow]
+	return strings.Join(row.Values, "\t")
 }

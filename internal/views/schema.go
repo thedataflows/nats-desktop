@@ -85,6 +85,11 @@ func NewSchemaView(th *theme.Theme) *SchemaView {
 
 func (v *SchemaView) SetApp(app App) {
 	v.App = app
+	v.Table.OnCopyFeedback = func(text string) {
+		if v.App != nil {
+			v.App.ShowToast("Copied: "+text, components.ToastTypeSuccess)
+		}
+	}
 }
 
 func (v *SchemaView) OnEnter() {
@@ -625,5 +630,8 @@ func (v *SchemaView) HandleShortcuts(gtx layout.Context) bool {
 
 // GetShortcutsHelp returns help text for this view's shortcuts
 func (v *SchemaView) GetShortcutsHelp() []shortcuts.Shortcut {
-	return nil
+	return []shortcuts.Shortcut{
+		shortcuts.CopyName(func() bool { return v.SelectedIdx >= 0 }, func() {}),
+		shortcuts.CopyRow(func() bool { return v.SelectedIdx >= 0 }, func() {}),
+	}
 }

@@ -98,7 +98,7 @@ func GroupShortcuts(shortcuts []Shortcut) []ShortcutGroup {
 			sc.Key == key.Name("6") || sc.Key == key.Name("7") || sc.Key == key.Name("8") ||
 			sc.Key == key.Name("9")):
 			group = "Navigation"
-		case sc.Name == "Create" || sc.Name == "Delete" || sc.Name == "Edit":
+		case sc.Name == "Create" || sc.Name == "Delete" || sc.Name == "Edit" || sc.Name == "Copy Name" || sc.Name == "Copy Row":
 			group = "Actions"
 		case sc.Name == "Save" || sc.Name == "Refresh":
 			group = "General"

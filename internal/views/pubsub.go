@@ -271,6 +271,11 @@ func NewPubSubView(th *theme.Theme) *PubSubView {
 
 func (v *PubSubView) SetApp(app App) {
 	v.App = app
+	v.Table.OnCopyFeedback = func(text string) {
+		if v.App != nil {
+			v.App.ShowToast("Copied: "+text, components.ToastTypeSuccess)
+		}
+	}
 }
 
 func (v *PubSubView) subscribeJetStream(config JetStreamSubscriptionConfig) {
@@ -1859,5 +1864,7 @@ func (v *PubSubView) GetShortcutsHelp() []shortcuts.Shortcut {
 	return []shortcuts.Shortcut{
 		shortcuts.Custom("Publish", "Publish message", key.NameReturn, key.ModShortcut, nil, func() {}),
 		shortcuts.Custom("Clear", "Clear messages", key.Name("C"), key.ModShortcut, nil, func() {}),
+		shortcuts.CopyName(func() bool { return v.SelectedIdx >= 0 }, func() {}),
+		shortcuts.CopyRow(func() bool { return v.SelectedIdx >= 0 }, func() {}),
 	}
 }

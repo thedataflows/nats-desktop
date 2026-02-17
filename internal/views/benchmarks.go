@@ -124,6 +124,11 @@ func NewBenchmarksView(th *theme.Theme) *BenchmarksView {
 
 func (v *BenchmarksView) SetApp(app App) {
 	v.App = app
+	v.Table.OnCopyFeedback = func(text string) {
+		if v.App != nil {
+			v.App.ShowToast("Copied: "+text, components.ToastTypeSuccess)
+		}
+	}
 }
 
 func (v *BenchmarksView) SetNavigation(next, prev any) {
@@ -849,5 +854,7 @@ func (v *BenchmarksView) GetShortcutsHelp() []shortcuts.Shortcut {
 	return []shortcuts.Shortcut{
 		shortcuts.Toggle("Start/Stop", key.NameSpace, 0, func() bool { return v.running }, func() {}),
 		shortcuts.Custom("Stop All", "Stop all benchmarks", key.Name("S"), key.ModShortcut, func() bool { return v.running }, func() {}),
+		shortcuts.CopyName(func() bool { return v.SelectedIdx >= 0 }, func() {}),
+		shortcuts.CopyRow(func() bool { return v.SelectedIdx >= 0 }, func() {}),
 	}
 }

@@ -438,6 +438,11 @@ func (v *ClusterView) Layout(gtx layout.Context, th *theme.Theme) layout.Dimensi
 
 func (v *ClusterView) SetApp(app App) {
 	v.App = app
+	v.Table.OnCopyFeedback = func(text string) {
+		if v.App != nil {
+			v.App.ShowToast("Copied: "+text, components.ToastTypeSuccess)
+		}
+	}
 }
 
 func (v *ClusterView) SetNavigation(next, prev any) {
@@ -1625,5 +1630,7 @@ func (v *ClusterView) HandleShortcuts(gtx layout.Context) bool {
 func (v *ClusterView) GetShortcutsHelp() []shortcuts.Shortcut {
 	return []shortcuts.Shortcut{
 		shortcuts.Refresh(func() {}),
+		shortcuts.CopyName(func() bool { return v.SelectedIdx >= 0 }, func() {}),
+		shortcuts.CopyRow(func() bool { return v.SelectedIdx >= 0 }, func() {}),
 	}
 }

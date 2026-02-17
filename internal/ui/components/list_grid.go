@@ -3,6 +3,7 @@ package components
 import (
 	"image"
 	"image/color"
+	"strings"
 	"sync"
 	"time"
 
@@ -52,6 +53,9 @@ type ListStyle struct {
 	// Double-click detection
 	lastClickTime time.Time
 	lastClickIdx  int
+
+	// OnCopyFeedback is called when a copy operation completes, with the copied text
+	OnCopyFeedback func(text string)
 }
 
 type ListItemAction struct {
@@ -246,6 +250,7 @@ func (l *ListStyle) Layout(gtx layout.Context) layout.Dimensions {
 				key.Filter{Focus: focusTag, Name: key.NameDownArrow},
 				key.Filter{Focus: focusTag, Name: key.NameEnter},
 				key.Filter{Focus: focusTag, Name: key.NameReturn},
+				key.Filter{Focus: focusTag, Name: key.Name("C"), Optional: key.ModCtrl | key.ModShift},
 			)
 			if !ok {
 				break
@@ -273,6 +278,25 @@ func (l *ListStyle) Layout(gtx layout.Context) layout.Dimensions {
 					}
 					if l.onSelect != nil && idx >= 0 && idx < len(items) {
 						l.onSelect(idx)
+					}
+				case key.Name("C"):
+					l.mx.Lock()
+					idx := l.selectedIdx
+					l.mx.Unlock()
+					if idx >= 0 && idx < len(items) {
+						if x.Modifiers.Contain(key.ModCtrl | key.ModShift) {
+							tsv := l.GetSelectedAllTSV()
+							CopyToClipboard(gtx, tsv)
+							if l.OnCopyFeedback != nil {
+								l.OnCopyFeedback(TruncateText(tsv, 50))
+							}
+						} else if x.Modifiers.Contain(key.ModCtrl) {
+							title := l.GetSelectedTitle()
+							CopyToClipboard(gtx, title)
+							if l.OnCopyFeedback != nil {
+								l.OnCopyFeedback(TruncateText(title, 50))
+							}
+						}
 					}
 				}
 			}
@@ -518,6 +542,36 @@ func (l *ListStyle) renderActions(gtx layout.Context, index int, isSelected bool
 		}))
 	}
 	return children
+}
+
+func (l *ListStyle) GetSelectedTitle() string {
+	l.mx.Lock()
+	defer l.mx.Unlock()
+
+	if l.selectedIdx < 0 || l.selectedIdx >= len(l.items) {
+		return ""
+	}
+
+	return l.items[l.selectedIdx].Title
+}
+
+func (l *ListStyle) GetSelectedAllTSV() string {
+	l.mx.Lock()
+	defer l.mx.Unlock()
+
+	if l.selectedIdx < 0 || l.selectedIdx >= len(l.items) {
+		return ""
+	}
+
+	item := l.items[l.selectedIdx]
+	parts := []string{
+		item.Title,
+		item.Subtitle,
+		item.Description,
+		item.Metadata,
+		item.Identifier,
+	}
+	return strings.Join(parts, "\t")
 }
 
 type GridStyle struct {

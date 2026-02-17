@@ -88,6 +88,9 @@ type MessageViewerModal struct {
 	// Invalidation callback - called when UI needs to be redrawn
 	onInvalidate func()
 
+	// Copy feedback callback
+	onCopyFeedback func(text string)
+
 	// Infinite scroll / load more
 	onLoadMore      func()  // Callback when user scrolls to bottom
 	isLoadingMore   bool    // Whether we're currently loading more items
@@ -127,6 +130,16 @@ func NewMessageViewerModal(th *theme.Theme) *MessageViewerModal {
 	m.listWidget.SetFocusTag(m.listWidget)
 
 	return m
+}
+
+// SetOnCopyFeedback sets the callback for copy feedback
+func (m *MessageViewerModal) SetOnCopyFeedback(fn func(text string)) {
+	m.onCopyFeedback = fn
+	m.listWidget.OnCopyFeedback = func(text string) {
+		if m.onCopyFeedback != nil {
+			m.onCopyFeedback(text)
+		}
+	}
 }
 
 // SetActions configures the delete, purge, and optional edit action handlers

@@ -1,6 +1,7 @@
 package views
 
 import (
+	"fmt"
 	"image"
 	"strconv"
 	"time"
@@ -1367,6 +1368,7 @@ func (v *ConnectionsView) HandleShortcuts(gtx layout.Context) bool {
 		key.Filter{Name: key.Name("N"), Optional: key.ModShortcut},
 		key.Filter{Name: key.NameDeleteForward},
 		key.Filter{Name: key.NameDeleteBackward},
+		key.Filter{Name: key.Name("C"), Optional: key.ModCtrl | key.ModShift},
 	)
 	if !ok {
 		return false
@@ -1405,6 +1407,21 @@ func (v *ConnectionsView) HandleShortcuts(gtx layout.Context) bool {
 				v.connectBtn.Click()
 				return true
 			}
+		case ke.Name == key.Name("C") && ke.Modifiers.Contain(key.ModCtrl|key.ModShift):
+			if v.selectedIdx >= 0 && v.app != nil && v.selectedIdx < len(v.app.GetConfig().Contexts) {
+				ctx := v.app.GetConfig().Contexts[v.selectedIdx]
+				tsv := fmt.Sprintf("%s\t%s\t%s\t%s", ctx.Name, ctx.URL, ctx.Description, ctx.Username)
+				components.CopyToClipboard(gtx, tsv)
+				v.app.ShowToast("Copied: "+components.TruncateText(tsv, 50), components.ToastTypeSuccess)
+				return true
+			}
+		case ke.Name == key.Name("C") && ke.Modifiers.Contain(key.ModCtrl):
+			if v.selectedIdx >= 0 && v.app != nil && v.selectedIdx < len(v.app.GetConfig().Contexts) {
+				ctx := v.app.GetConfig().Contexts[v.selectedIdx]
+				components.CopyToClipboard(gtx, ctx.Name)
+				v.app.ShowToast("Copied: "+ctx.Name, components.ToastTypeSuccess)
+				return true
+			}
 		}
 	}
 	return false
@@ -1420,5 +1437,7 @@ func (v *ConnectionsView) GetShortcutsHelp() []shortcuts.Shortcut {
 		shortcuts.Import(func() {}),
 		shortcuts.Export(func() {}),
 		shortcuts.Connect(func() bool { return v.selectedIdx >= 0 }, func() {}),
+		shortcuts.CopyName(func() bool { return v.selectedIdx >= 0 }, func() {}),
+		shortcuts.CopyRow(func() bool { return v.selectedIdx >= 0 }, func() {}),
 	}
 }

@@ -237,6 +237,13 @@ func NewKVView(th *theme.Theme) *KVView {
 		v.RestoreListFocus = true
 	})
 
+	// Set up copy feedback callback for items modal
+	v.itemsModal.SetOnCopyFeedback(func(text string) {
+		if v.App != nil {
+			v.App.ShowToast("Copied: "+text, components.ToastTypeSuccess)
+		}
+	})
+
 	// Set up create bucket modal with custom content
 	v.createModal.ReturnFocus = v.Table.FocusTag()
 	v.createModal.MaxWidth = unit.Dp(500)
@@ -324,6 +331,11 @@ func NewKVView(th *theme.Theme) *KVView {
 
 func (v *KVView) SetApp(app App) {
 	v.App = app
+	v.Table.OnCopyFeedback = func(text string) {
+		if v.App != nil {
+			v.App.ShowToast("Copied: "+text, components.ToastTypeSuccess)
+		}
+	}
 }
 
 func (v *KVView) SetNavigation(next, prev any) {
@@ -1512,5 +1524,7 @@ func (v *KVView) GetShortcutsHelp() []shortcuts.Shortcut {
 		shortcuts.Refresh(func() {}),
 		shortcuts.Delete(func() bool { return v.SelectedIdx >= 0 }, func() {}),
 		shortcuts.Browse(func() bool { return v.SelectedIdx >= 0 }, func() {}),
+		shortcuts.CopyName(func() bool { return v.SelectedIdx >= 0 }, func() {}),
+		shortcuts.CopyRow(func() bool { return v.SelectedIdx >= 0 }, func() {}),
 	}
 }

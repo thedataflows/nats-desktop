@@ -200,6 +200,16 @@ func NewObjectsView(th *theme.Theme) *ObjectsView {
 
 func (v *ObjectsView) SetApp(app App) {
 	v.App = app
+	v.Table.OnCopyFeedback = func(text string) {
+		if v.App != nil {
+			v.App.ShowToast("Copied: "+text, components.ToastTypeSuccess)
+		}
+	}
+	v.objectsList.OnCopyFeedback = func(text string) {
+		if v.App != nil {
+			v.App.ShowToast("Copied: "+text, components.ToastTypeSuccess)
+		}
+	}
 }
 
 func (v *ObjectsView) SetNavigation(next, prev any) {
@@ -1418,5 +1428,7 @@ func (v *ObjectsView) GetShortcutsHelp() []shortcuts.Shortcut {
 		shortcuts.Refresh(func() {}),
 		shortcuts.Delete(func() bool { return v.SelectedIdx >= 0 }, func() {}),
 		shortcuts.Browse(func() bool { return v.SelectedIdx >= 0 }, func() {}),
+		shortcuts.CopyName(func() bool { return v.SelectedIdx >= 0 }, func() {}),
+		shortcuts.CopyRow(func() bool { return v.SelectedIdx >= 0 }, func() {}),
 	}
 }

@@ -116,6 +116,11 @@ func NewTraceView(th *theme.Theme) *TraceView {
 // SetApp sets the app reference
 func (v *TraceView) SetApp(app App) {
 	v.App = app
+	v.Table.OnCopyFeedback = func(text string) {
+		if v.App != nil {
+			v.App.ShowToast("Copied: "+text, components.ToastTypeSuccess)
+		}
+	}
 }
 
 // SetNavigation sets the next and prev navigation tags
@@ -863,5 +868,8 @@ func (v *TraceView) HandleShortcuts(gtx layout.Context) bool {
 
 // GetShortcutsHelp returns help text for this view's shortcuts
 func (v *TraceView) GetShortcutsHelp() []shortcuts.Shortcut {
-	return nil
+	return []shortcuts.Shortcut{
+		shortcuts.CopyName(func() bool { return v.SelectedIdx >= 0 }, func() {}),
+		shortcuts.CopyRow(func() bool { return v.SelectedIdx >= 0 }, func() {}),
+	}
 }
