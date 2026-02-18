@@ -116,6 +116,8 @@ github.com/mattn/go-isatty
 # github.com/minio/highwayhash v1.0.4-0.20251030100505-070ab1a87a76
 ## explicit; go 1.15
 github.com/minio/highwayhash
+# github.com/nats-io/jsm.go v0.3.0
+## explicit; go 1.24.0
 # github.com/nats-io/jwt/v2 v2.8.0
 ## explicit; go 1.23.0
 github.com/nats-io/jwt/v2
