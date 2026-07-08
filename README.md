@@ -37,6 +37,10 @@ Screenshots are in the [screenshots/](screenshots/) directory.
 
 <https://github.com/thedataflows/nats-desktop/releases>
 
+On **macOS**, download the `_macos_universal.dmg` (works on both Apple Silicon and Intel), open it, and drag **NATS Desktop** into **Applications**. The app is not yet signed or notarized, so on first launch right-click it and choose **Open** (or run `xattr -cr "/Applications/NATS Desktop.app"`) to get past Gatekeeper.
+
+On **Linux** and **Windows**, download the archive for your platform and run the binary directly.
+
 ### 2. Start a local NATS server
 
 You can download and run the NATS server from <https://github.com/nats-io/nats-server/releases/latest> or use [mise-en-place](https://github.com/jdx/mise/releases/latest) in a clone of this repository:
